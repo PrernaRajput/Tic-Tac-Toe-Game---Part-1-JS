@@ -1,82 +1,43 @@
 * {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  padding: 20px;
-  text-align: center;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
 }
 
-.selectionBox {
-  margin-block: 1rem;
+/* write your style */
+.gameBoard{
+    display: grid;
+    grid-template-columns: 30% 30% 30%;
+    width: fit-content;
+    gap: 8px;
 }
 
-.gameBoard {
-  display: grid;
-  grid-template-columns: repeat(3, 60px);
-  width: fit-content;
-  margin: 0 auto;
+.gameBoard>div{
+    border: 1px solid black;
+    height: 32px;
+    width: 80px;
+    align-items: center;
+    justify-content: center;
 }
 
-div[id|="number"] {
-  width: auto;
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
+.gameBoard>div:hover{
+    cursor: pointer;
 
-div[id|="number"]:hover {
-  background: rgb(222, 221, 221);
 }
-
-#number-1,
-#number-2,
-#number-4,
-#number-5 {
-  border-right: 1px solid black;
-  border-bottom: 1px solid black;
-}
-
-#number-3,
-#number-6 {
-  border-bottom: 1px solid black;
-}
-
-#number-7,
-#number-8 {
-  border-right: 1px solid black;
-}
-
-.displayResult {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  margin: 1rem auto;
-}
-
-.restartBtn {
-  margin-top: 1rem;
-  background: rgb(241, 2, 2);
-  padding: 0.6rem 2rem;
-  border: 0;
-  border-radius: 0.3rem;
-  font-weight: 600;
-  cursor: pointer;
-  color: white;
-}
-
-.restartBtn:hover {
-  background: rgb(255, 0, 0);
-}
-
-#result {
-  font-size: 1.5rem;
-  color: green;
-}
+    .cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      background: #f3f4f6;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    .cell.win { background: #bbf7d0; }

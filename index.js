@@ -1,92 +1,99 @@
-let sign = 'X';
-let remaningTurn = 9;
+// write your function
 
-function isWin(e) {
-    const curElement = e.target;
+let board = [];
+let playerNextX = true;
+let winner = null;
+let gameOver = false;
 
-    // checks, this box should be empty before clicking on it
-    if (!isEmptyCell(curElement) || !remaningTurn) {
-        return;
+const restartGame = () => {
+  board = Array.from({ length: 3 }, () => Array(3).fill(''));
+  playerNextX = true;
+  winner = null;
+  gameOver = false;
+    const playerTurn = document.getElementById('playerTurn');
+    playerTurn.textContent = 'X';
+    setBoard();
+}
+
+const checkWinner = () => {
+  const lines = [
+    [[0,0],[0,1],[0,2]],
+    [[1,0],[1,1],[1,2]],
+    [[2,0],[2,1],[2,2]],
+    [[0,0],[1,0],[2,0]],
+    [[0,1],[1,1],[2,1]],
+    [[0,2],[1,2],[2,2]],
+    [[0,0],[1,1],[2,2]],
+    [[0,2],[1,1],[2,0]]
+  ];
+
+  for (const line of lines) {
+    const values = line.map(([r, c]) => board[r][c]);
+    const unique = new Set(values);
+    if (unique.size === 1 && !unique.has('')) {
+      return { winner: values[0], line };
     }
+  }
 
-    curElement.innerText = sign;
-    const declareResult = document.getElementById('result');
+  return null;
+};
 
-    if (isGameCompletes(curElement)) {
-        declareResult.innerText = sign + ' won';
-        return;
-    }
-
-    changeSign();
-    remaningTurn--;
-    if (remaningTurn === 0) {
-        declareResult.innerText = 'Match Draw'
-    }
-
-}
-
-function isEmptyCell(element) {
-    return element.textContent === '';
-}
-
-function changeSign() {
-    sign = sign === 'X' ? 'O' : 'X';
-    document.getElementById('playerTurn').innerText = sign;
-}
-
-function isGameCompletes(element) {
-    const boxNo = getLastNumberFromId(element.id);
-    const combinations = [[1, 2, 3], [1, 4, 7], [1, 5, 9], [4, 5, 6], [7, 8, 9], [2, 5, 8], [3, 6, 9], [3, 5, 7]];
-
-    for (let array of combinations) {
-        if (array.includes(boxNo) && checkIsFilledCorrectly(array)) {
-            remaningTurn = 0;
-
-            color3ConsecutiveMatchedCell(array);
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-function getLastNumberFromId(str) {      // we know box no would range to 1-9
-    return Number(Array.from(str)[str.length - 1])
-}
-
-function checkIsFilledCorrectly(arr) {
-    for (let el of arr) {
-        const element = document.getElementById(`number-${el}`);
-
-        if (element.textContent === '' || (sign !== element.textContent))
-            return false;
-    }
-
-    return true;
-}
-
-
-function color3ConsecutiveMatchedCell(array) {
-    array.forEach(boxNo => {
-        document.getElementById(`number-${boxNo}`).style.background = '#fca103'
-    });
-}
-
-
-function restartGame() {
-    // window.location.reload()   // avoiding this in the particular part but used in the next part
-    clearCellContent();
-    document.getElementById('playerTurn').innerText = 'X';
-    remaningTurn = 9;
-    document.getElementById('result').innerText = '';
-    sign = 'X'
-}
-
-function clearCellContent() {
-    const allCells = document.querySelector('.gameBoard').children;
-    for (let element of allCells) {
-        element.innerText = ''
-        element.style.background = ''
+const isNextPlayerX = () => {
+    if (playerNextX === true) {
+        playerNextX = false;
+        return 'X';
+    } else {
+        playerNextX = true;
+        return 'O';
     }
 }
+
+const playerMove = (rowIndex, colIndex) => {
+  if (!gameOver && board[rowIndex][colIndex]==="") {
+    const turn = isNextPlayerX();
+    board[rowIndex][colIndex] = turn;
+    setBoard();
+    const playerTurn = document.getElementById('playerTurn');
+    playerTurn.textContent = playerNextX ? 'X' : 'O';
+    const result = checkWinner();
+    const resultDisplay = document.getElementById('result');
+
+    if (result.winner) {
+      winner = result.winner;
+      const line = result.line;
+      gameOver = true;
+      resultDisplay.textContent = `Player ${winner} Won!`
+      highlightWin(line)
+    } else if (board.flat().every(c => c !== '')) {
+        gameOver = true;
+        resultDisplay.textContent = "It's a draw!";
+      }
+    
+  }
+
+}
+
+    const highlightWin = (line) => {
+      const cells = document.querySelectorAll('.cell');
+      line.forEach(([r,c]) => {
+        const idx = r*3 + c;
+        cells[idx].classList.add('win');
+      });
+    };
+
+const setBoard = () =>{
+    const gameBoard = document.getElementById('gameBoard');
+    gameBoard.innerHTML = `
+  ${board
+    .map((row, rowIndex) => {
+      return row
+        .map((col, colIndex) => {
+          return `<div class="cell" id='${row}_${col}' onclick='playerMove(${rowIndex}, ${colIndex})'>${board[rowIndex][colIndex]}</div>`;
+        })
+        .join("");
+    })
+    .join("")}
+`;
+}
+
+restartGame();

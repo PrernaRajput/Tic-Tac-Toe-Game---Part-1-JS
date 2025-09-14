@@ -5,219 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic-Tac-Toe Part-1</title>
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .selectionBox {
-            margin-block: 1rem;
-
-        }
-
-        .gameBoard {
-            display: grid;
-            grid-template-columns: repeat(3, 60px);
-            width: fit-content;
-            margin: 0 auto;
-        }
-
-        div[id |='number'] {
-            width: auto;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-
-        div[id |='number']:hover {
-            background: rgb(222, 221, 221);
-        }
-
-        #number-1,
-        #number-2,
-        #number-4,
-        #number-5 {
-            border-right: 1px solid black;
-            border-bottom: 1px solid black;
-        }
-
-        #number-3,
-        #number-6 {
-            border-bottom: 1px solid black;
-        }
-
-        #number-7,
-        #number-8 {
-            border-right: 1px solid black;
-        }
-
-
-        .displayResult {
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-            margin: 1rem auto;
-        }
-
-
-
-        .restartBtn {
-            margin-top: 1rem;
-            background: rgb(241, 2, 2);
-            padding: 0.6rem 2rem;
-            border: 0;
-            border-radius: 0.3rem;
-            font-weight: 600;
-            cursor: pointer;
-            color: white;
-        }
-
-        .restartBtn:hover {
-            background: rgb(255, 0, 0);
-        }
-
-
-        #result {
-            font-size: 1.5rem;
-            color: green;
-        }
-    </style>
-
 </head>
 
 <body>
     <h1>Tic-Tac-Toe Game</h1>
-    <div class="selectionBox">
-        <div class="displayResult">
-            <p>Turn : <span id="playerTurn">X</span></p>
-            <span id="result"></span>
-        </div>
-    </div>
 
-    <div class="gameBoard">
-        <div id="number-1" onclick="isWin(event)"></div>
-        <div id="number-2" onclick="isWin(event)"></div>
-        <div id="number-3" onclick="isWin(event)"></div>
-        <div id="number-4" onclick="isWin(event)"></div>
-        <div id="number-5" onclick="isWin(event)"></div>
-        <div id="number-6" onclick="isWin(event)"></div>
-        <div id="number-7" onclick="isWin(event)"></div>
-        <div id="number-8" onclick="isWin(event)"></div>
-        <div id="number-9" onclick="isWin(event)"></div>
+    <div class="">
+        <p>Turn : <span id="playerTurn">X</span> </p>
+        <p> <span id="result"></span> </p>
+        
+        <!-- display result -->
+    </div>
+    <div class="gameBoard" id="gameBoard">
     </div>
 
 
     <button class="restartBtn" onclick="restartGame()">Restart</button>
-
-    <script>
-        let sign = 'X';
-        let remaningTurn = 9;
-
-        function isWin(e) {
-            const curElement = e.target;
-
-            // the clicked cell should be empty and after game ends the cell become disable
-            if (!isEmptyCell(curElement) || !remaningTurn) {
-                return;
-            }
-
-            curElement.innerText = sign;
-            const declareResult = document.getElementById('result');
-
-            if (isGameCompletes(curElement)) {
-                declareResult.innerText = sign + ' won';
-                return;
-            }
-
-            changeSign();
-            remaningTurn--;
-            if (remaningTurn === 0) {
-                declareResult.innerText = 'Game Draw'
-            }
-
-        }
-
-        function isEmptyCell(element) {
-            return element.textContent === '';
-        }
-
-        function changeSign() {
-            sign = sign === 'X' ? 'O' : 'X';
-            document.getElementById('playerTurn').innerText = sign;
-        }
-
-        function isGameCompletes(element) {
-            const boxNo = getLastNumberFromId(element.id);
-            const combinations = [[1, 2, 3], [1, 4, 7], [1, 5, 9], [4, 5, 6], [7, 8, 9], [2, 5, 8], [3, 6, 9], [3, 5, 7]];
-
-            for (let array of combinations) {
-                if (array.includes(boxNo) && checkIsFilledCorrectly(array)) {
-                    remaningTurn = 0;
-
-                    color3ConsecutiveMatchedCell(array);
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-
-        function getLastNumberFromId(str) {      // we know box no would range to 1-9
-            return Number(Array.from(str)[str.length - 1])
-        }
-
-        function checkIsFilledCorrectly(arr) {
-            for (let el of arr) {
-                const element = document.getElementById(`number-${el}`);
-
-                if (element.textContent === '' || (sign !== element.textContent))
-                    return false;
-            }
-
-            return true;
-        }
-
-
-        function color3ConsecutiveMatchedCell(array) {
-            array.forEach(boxNo => {
-                document.getElementById(`number-${boxNo}`).style.background = '#fca103'
-            });
-        }
-
-
-        function restartGame() {
-            // window.location.reload()   // avoiding this in the particular part but used in the next part
-            clearCellContent();
-            document.getElementById('playerTurn').innerText = 'X';
-            remaningTurn = 9;
-            document.getElementById('result').innerText = '';
-            sign = 'X'
-        }
-
-        function clearCellContent() {
-            const allCells = document.querySelector('.gameBoard').children;
-            for (let element of allCells) {
-                element.innerText = ''
-                element.style.background = ''
-            }
-        }
-
-
-
-    </script>
 </body>
 
 </html>
